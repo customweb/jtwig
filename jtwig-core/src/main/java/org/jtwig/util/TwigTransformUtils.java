@@ -14,11 +14,17 @@
 
 package org.jtwig.util;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.jtwig.functions.builtin.UnescaptedString;
+
 public class TwigTransformUtils {
     public static String toTwig (Object object) {
         if (object instanceof Boolean)
             return ((boolean)object) ? "1" : "0";
+        else if (object instanceof UnescaptedString) {
+        	return ((UnescaptedString) object).getContent();
+        }
 
-        return String.valueOf(object);
+        return StringEscapeUtils.escapeXml(String.valueOf(object));
     }
 }

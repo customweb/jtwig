@@ -1,0 +1,7 @@
+
+includeFlat(
+	'jtwig-core',
+	'jtwig-functions',
+	'jtwig-spring'
+)
+

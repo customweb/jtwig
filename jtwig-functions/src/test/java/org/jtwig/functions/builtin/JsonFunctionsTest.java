@@ -11,7 +11,7 @@ public class JsonFunctionsTest {
     @Test
     public void testExecute() throws Exception {
         Hello world = new Hello("world");
-        assertEquals("{\"hello\":\"world\"}", underTest.jsonEncode(world));
+        assertEquals("{\"hello\":\"world\"}", underTest.jsonEncode(world).toString());
     }
 
     private static class Hello {

@@ -1,3 +1,5 @@
+apply plugin: 'io.wallee.java-project'
+
 dependencies {
     compile project(":jtwig-functions")
 

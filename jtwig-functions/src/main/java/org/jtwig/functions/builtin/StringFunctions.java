@@ -14,13 +14,8 @@
 
 package org.jtwig.functions.builtin;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.jtwig.functions.annotations.JtwigFunction;
-import org.jtwig.functions.annotations.Parameter;
-import org.jtwig.functions.exceptions.FunctionException;
-import org.jtwig.functions.util.HtmlUtils;
+import static java.nio.charset.Charset.forName;
+import static java.util.Arrays.asList;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -29,8 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static java.nio.charset.Charset.forName;
-import static java.util.Arrays.asList;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.jtwig.functions.annotations.JtwigFunction;
+import org.jtwig.functions.annotations.Parameter;
+import org.jtwig.functions.exceptions.FunctionException;
+import org.jtwig.functions.util.HtmlUtils;
 
 public class StringFunctions {
     @JtwigFunction(name = "capitalize")
@@ -47,20 +47,20 @@ public class StringFunctions {
     }
 
     @JtwigFunction(name = "escape", aliases = {"e"})
-    public String escape (@Parameter String input) throws FunctionException {
-        return escape(input, EscapeStrategy.HTML.name());
+    public Object escape (@Parameter String input) throws FunctionException {
+        return new UnescaptedString(StringEscapeUtils.escapeHtml4(input));
     }
 
     @JtwigFunction(name = "escape", aliases = {"e"})
-    public String escape (@Parameter String input, @Parameter String strategy) throws FunctionException {
+    public Object escape (@Parameter String input, @Parameter String strategy) throws FunctionException {
         switch (EscapeStrategy.strategyByName(strategy.toLowerCase())) {
             case JAVASCRIPT:
-                return StringEscapeUtils.escapeEcmaScript(input);
+                return new UnescaptedString(StringEscapeUtils.escapeEcmaScript(input));
+            case HTML:
+            	return new UnescaptedString(StringEscapeUtils.escapeHtml4(input));
             case XML:
-                return StringEscapeUtils.escapeXml(input);
-            case HTML: // Default html
             default:
-                return StringEscapeUtils.escapeHtml4(input);
+                return input;
         }
     }
 
@@ -76,8 +76,15 @@ public class StringFunctions {
     }
 
     @JtwigFunction(name = "nl2br")
-    public String nl2br (@Parameter String input) {
-        return input.replace("\n", "<br />");
+    public Object nl2br (@Parameter Object input) {
+    	String content;
+    	if (input instanceof UnescaptedString) {
+    		content = ((UnescaptedString)input).getContent();
+    	}
+    	else {
+    		content = StringEscapeUtils.escapeXml(toTwig(input));
+    	}
+        return new UnescaptedString(content.replace("\n", "<br />"));
     }
 
     @JtwigFunction(name = "replace")
@@ -100,13 +107,13 @@ public class StringFunctions {
     }
 
     @JtwigFunction(name = "striptags")
-    public String stripTags (@Parameter String input) {
+    public Object stripTags (@Parameter String input) {
         return stripTags(input, "");
     }
 
     @JtwigFunction(name = "striptags")
-    public String stripTags (@Parameter String input, @Parameter String allowedTags) {
-        return HtmlUtils.stripTags(input, allowedTags);
+    public Object stripTags (@Parameter String input, @Parameter String allowedTags) {
+        return new UnescaptedString( HtmlUtils.stripTags(input, allowedTags));
     }
 
 
@@ -152,6 +159,26 @@ public class StringFunctions {
     public String reverse (@Parameter String input) {
         return new StringBuilder(input).reverse().toString();
     }
+
+    /**
+     * This function does output the content unescaped.
+     *
+     * @param test the object to handle without escaping.
+     * @return
+     */
+	@JtwigFunction(name= "raw")
+	public UnescaptedString raw(@Parameter Object test) {
+		return new UnescaptedString(toTwig(test));
+	}
+
+
+    private static String toTwig (Object object) {
+        if (object instanceof Boolean)
+            return ((boolean)object) ? "1" : "0";
+
+        return String.valueOf(object);
+    }
+
 
 
     enum EscapeStrategy {

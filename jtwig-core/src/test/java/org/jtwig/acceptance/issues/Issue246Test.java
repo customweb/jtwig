@@ -14,7 +14,7 @@ public class Issue246Test {
         JtwigModelMap model = new JtwigModelMap();
 
         String result = JtwigTemplate
-            .inlineTemplate("{{ \"\\\"\" }}")
+            .inlineTemplate("{{ \"\\\"\" | raw }}")
             .render(model);
 
         assertThat(result, is(equalTo("\"")));
@@ -25,7 +25,7 @@ public class Issue246Test {
         JtwigModelMap model = new JtwigModelMap();
 
         String result = JtwigTemplate
-            .inlineTemplate("{{ '\\'' }}")
+            .inlineTemplate("{{ '\\'' | raw }}")
             .render(model);
 
         assertThat(result, is(equalTo("'")));

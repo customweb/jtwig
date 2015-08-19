@@ -67,17 +67,18 @@ public class StringFunctionsTest {
 
     @Test
     public void escapeExecuteDefault() throws Exception {
-        assertEquals("&lt;html&gt;", underTest.escape("<html>"));
+        assertEquals("&lt;html&gt;", underTest.escape("<html>").toString());
     }
 
     @Test
     public void escapeExecuteXml() throws Exception {
-        assertEquals("&lt;xml /&gt;", underTest.escape("<xml />", "xml"));
+    	// We expect actually that this method does not escape anything because we do the real escape later.
+        assertEquals("<xml />", underTest.escape("<xml />", "xml").toString());
     }
 
     @Test
     public void escapeExecuteJs() throws Exception {
-        assertEquals("<xml \\/>", underTest.escape("<xml />", "js"));
+        assertEquals("<xml \\/>", underTest.escape("<xml />", "js").toString());
     }
 
     @Test
@@ -108,7 +109,7 @@ public class StringFunctionsTest {
 
     @Test
     public void nl2brExecute() throws Exception {
-        assertEquals("a<br />b", underTest.nl2br("a\nb"));
+        assertEquals("a<br />b", underTest.nl2br("a\nb").toString());
     }
 
 
@@ -149,7 +150,7 @@ public class StringFunctionsTest {
 
     @Test
     public void stripExecute() throws Exception {
-        assertEquals("ab", underTest.stripTags("a<br />b"));
+        assertEquals("ab", underTest.stripTags("a<br />b").toString());
     }
 
     @Test

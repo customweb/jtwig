@@ -14,7 +14,7 @@ public class JsonFunctions {
     }
 
     @JtwigFunction(name = "json_encode")
-    public String jsonEncode (@Parameter Object input) throws IOException {
-        return jsonConfiguration.jsonMapper().apply(input);
+    public UnescaptedString jsonEncode (@Parameter Object input) throws IOException {
+        return new UnescaptedString(jsonConfiguration.jsonMapper().apply(input));
     }
 }

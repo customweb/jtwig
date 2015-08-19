@@ -26,13 +26,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jtwig.configuration.JtwigConfigurationBuilder.newConfiguration;
 
 /**
- * 
+ *
  */
 public class Issue210Test {
     @Test
     public void testNonUTFEncoding() throws Exception {
         JtwigModelMap model = new JtwigModelMap();
-        model.withModelAttribute("text", "tête de bou  간편한 설치 및 사용");
+        model.withModelAttribute("text", "t\u00eate de bou  \uac04\ud3b8\ud55c \uc124\uce58 \ubc0f \uc0ac\uc6a9");
 
         String result = JtwigTemplate
             .inlineTemplate("{{ text }}", newConfiguration()
@@ -40,17 +40,17 @@ public class Issue210Test {
                 .build())
             .render(model);
 
-        assertThat(result, is(equalTo("t�te de bou  ??? ?? ? ??")));
+        assertThat(result, is(equalTo("t\ufffdte de bou  ??? ?? ? ??")));
     }
     @Test
     public void testUTFEncoding() throws Exception {
         JtwigModelMap model = new JtwigModelMap();
-        model.withModelAttribute("text", "tête de bou  간편한 설치 및 사용");
+        model.withModelAttribute("text", "t\u00eate de bou  \uac04\ud3b8\ud55c \uc124\uce58 \ubc0f \uc0ac\uc6a9");
 
         String result = JtwigTemplate
             .inlineTemplate("{{ text }}")
             .render(model);
 
-        assertThat(result, is(equalTo("tête de bou  간편한 설치 및 사용")));
+        assertThat(result, is(equalTo("t\u00eate de bou  \uac04\ud3b8\ud55c \uc124\uce58 \ubc0f \uc0ac\uc6a9")));
     }
 }

@@ -50,7 +50,7 @@ public class StringFunctionsTest {
         JtwigModelMap model = new JtwigModelMap();
 
         String result = JtwigTemplate
-            .inlineTemplate("{{ escape('joão') }}")
+            .inlineTemplate("{{ escape('jo\u00e3o') }}")
             .render(model);
 
         assertThat(result, is(equalTo("jo&atilde;o")));
@@ -194,7 +194,7 @@ public class StringFunctionsTest {
         JtwigModelMap model = new JtwigModelMap();
 
         String result = JtwigTemplate
-            .inlineTemplate("{{ url_encode('ã') }}")
+            .inlineTemplate("{{ url_encode('\u00e3') }}")
             .render(model);
 
         assertThat(result, is(equalTo("%C3%A3")));
@@ -208,6 +208,6 @@ public class StringFunctionsTest {
             .inlineTemplate("{{ url_encode({ one: 1, two: 2 }) }}")
             .render(model);
 
-        assertThat(result, is(equalTo("one=1&two=2")));
+        assertThat(result, is(equalTo("one=1&amp;two=2")));
     }
 }
