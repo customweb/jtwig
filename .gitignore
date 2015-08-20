@@ -1,26 +1,27 @@
 # Build files
-*.class
-target/
-build/
+#*.class
+#target/
+#build/
 
 # Gradle
-.gradle
-gradle/
-gradlew*
+#.gradle
+#gradle/
+#gradlew*
 
 # Release files
-release.properties
+#release.properties
 
 # Package Files #
-*.jar
-*.war
-*.ear
+#*.jar
+#*.war
+#*.ear
 
 # IDE files (Eclipse)
-.settings
-.project
-.classpath
+#.settings/
+#.project
+#.classpath
 
 # IDE files (IntelliJ)
-.idea/
-*.iml
+#.idea/
+#*.iml
+

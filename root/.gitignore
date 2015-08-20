@@ -1,1 +1,7 @@
 /bin/
+/.eclipse-classes/
+/build/
+/.gradle/
+/.classpath
+/.project
+/.settings/
