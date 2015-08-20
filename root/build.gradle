@@ -31,7 +31,6 @@ buildscript {
 	maven {
 		url "http://dl.bintray.com/jtwig/maven/"
 	}
-
   }
 
   dependencies {
@@ -75,30 +74,6 @@ allprojects {
   }
 }
 
-// -- Custom properties for important dependency version numbers used in different places:
-
-ext.depv = new TreeMap()
-
-// -- Configured dependencies:
-
-ext.deps = new TreeMap()
-
-
-// ---- Custom Tasks ----
-
-// ---- Helper Methods ----
-
-ext.collectTasksCache = [:]
-
-private def collectTasks(def parentTask, def names) {
-	def tasks = collectTasksCache[parentTask]
-	if (tasks == null) {
-		tasks = project.subprojects.collect { p -> p.tasks.findAll { t -> names.contains(t.name) } }.flatten()
-		collectTasksCache[parentTask] = tasks
-		// println "${parentTask}.dependsOn: ${tasks}"
-	}
-	return tasks
-}
 
 // ---- Imports ----
 
