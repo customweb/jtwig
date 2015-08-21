@@ -42,7 +42,7 @@ buildscript {
 // ------ Basic Configuration ------
 
 group = 'org.jtwig'
-ext.buildVersion = '4.0'
+ext.buildVersion = '4.0.0'
 ext.javaVersion = '1.7'
 defaultTasks 'buildAll'
 
