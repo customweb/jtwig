@@ -44,12 +44,12 @@ public class Include extends AbstractElement {
         this.withExpression = with;
         return this;
     }
-    
+
     public Include setIsolated(boolean isolated) {
         this.isolated = isolated;
         return this;
     }
-    
+
     public Include setIgnoreMissing (boolean ignoreMissing) {
         this.ignoreMissing = ignoreMissing;
         return this;
@@ -70,7 +70,7 @@ public class Include extends AbstractElement {
         } catch (ResourceException ex) {
             throw new CompileException(ex);
         }
-        
+
         Compiled compiled = new Compiled(position, expr.compile(context), isolated, ignoreMissing, context);
         if (withExpression != null)
             compiled.with(withExpression.compile(context));
@@ -114,9 +114,8 @@ public class Include extends AbstractElement {
                 Template.CompiledTemplate compiled = context.environment().compile(resource);
 
                 // Isolate the render context if needed
-                RenderContext usedContext = context;
+                RenderContext usedContext = context.isolatedModel();
                 if (isolated) {
-                    usedContext = context.isolatedModel();
                     ((Map)usedContext.map("model")).clear();
                 }
 
@@ -139,7 +138,7 @@ public class Include extends AbstractElement {
             }
         }
     }
-    
+
     public static class Missing implements Renderable {
         @Override
         public void render(RenderContext context) throws RenderException {}

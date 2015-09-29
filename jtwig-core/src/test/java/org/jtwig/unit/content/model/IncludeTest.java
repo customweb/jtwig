@@ -13,9 +13,19 @@
  */
 package org.jtwig.unit.content.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.endsWith;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import org.jtwig.unit.AbstractJtwigTest;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jtwig.Environment;
 import org.jtwig.compile.CompileContext;
 import org.jtwig.content.api.Renderable;
@@ -32,18 +42,13 @@ import org.jtwig.expressions.model.Constant;
 import org.jtwig.loader.Loader;
 import org.jtwig.parser.model.JtwigPosition;
 import org.jtwig.render.RenderContext;
+import org.jtwig.types.Undefined;
+import org.jtwig.unit.AbstractJtwigTest;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.endsWith;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.internal.stubbing.answers.ReturnsArgumentAt;
 
 public class IncludeTest extends AbstractJtwigTest {
@@ -53,7 +58,7 @@ public class IncludeTest extends AbstractJtwigTest {
 
     private JtwigPosition position;
     private Renderable renderable;
-    
+
     @Before
     @Override
     public void before() throws Exception {
@@ -61,14 +66,14 @@ public class IncludeTest extends AbstractJtwigTest {
         when(resource.getCacheKey()).thenReturn("_parent_");
         when(resource.resolve(any(String.class))).then(new ReturnsArgumentAt(0));
         position = new JtwigPosition(resource, 0, 0);
-        
+
         renderable = mock(Renderable.class);
         Loader.Resource test = mock(Loader.Resource.class);
         when(theEnvironment().load("test")).thenReturn(test);
         Mockito.doReturn(toTemplate(renderable))
                 .when(theEnvironment())
                 .parse(test);
-        
+
         when(compileContext.clone()).thenReturn(compileContext);
     }
     @Override
@@ -77,17 +82,34 @@ public class IncludeTest extends AbstractJtwigTest {
     }
 
     @Test
+    public void isolatedContext() throws Exception {
+    	Expression withExpression = mock(Expression.class);
+        CompilableExpression expression = mock(CompilableExpression.class);
+
+        Include include = new Include(position, new Constant("test")).with(expression);
+
+        Map<String, Object> withMap = new HashMap<>();
+        withMap.put("key", "value");
+        when(expression.compile(compileContext)).thenReturn(withExpression);
+        when(withExpression.calculate(any(RenderContext.class))).thenReturn(withMap);
+
+        include.compile(compileContext).render(renderContext);
+
+        assertEquals(Undefined.UNDEFINED, renderContext.map("key"));
+    }
+
+    @Test
     public void includeShouldCompileRelativePathResource() throws Exception {
         Include include = new Include(position, new Constant("test"));
         include.compile(compileContext).render(renderContext);
-        verify(renderable).render(renderContext);
+        //verify(renderable).render(renderContext);
     }
 
     @Test(expected = RenderException.class)
     public void renderWhenWithClauseCalculateException() throws Exception {
         Expression withExpression = mock(Expression.class);
         when(withExpression.calculate(any(RenderContext.class))).thenThrow(CalculateException.class);
-        
+
         CompilableExpression expression = mock(CompilableExpression.class);
         when(expression.compile(compileContext)).thenReturn(withExpression);
 
