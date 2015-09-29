@@ -86,7 +86,7 @@ public class IncludeTest extends AbstractJtwigTest {
     	Expression withExpression = mock(Expression.class);
         CompilableExpression expression = mock(CompilableExpression.class);
 
-        Include include = new Include(position, new Constant("test")).with(expression);
+        Include include = new Include(position, new Constant<>("test")).with(expression);
 
         Map<String, Object> withMap = new HashMap<>();
         withMap.put("key", "value");
@@ -113,7 +113,7 @@ public class IncludeTest extends AbstractJtwigTest {
         CompilableExpression expression = mock(CompilableExpression.class);
         when(expression.compile(compileContext)).thenReturn(withExpression);
 
-        Include include = new Include(position, new Constant("test")).with(expression);
+        Include include = new Include(position, new Constant<>("test")).with(expression);
 
         doThrow(IOException.class)
                 .when(renderContext)
@@ -125,7 +125,7 @@ public class IncludeTest extends AbstractJtwigTest {
 
     @Test(expected = CompileException.class)
     public void compileWhenResourceException() throws Exception {
-        Include include = new Include(position, new Constant("test"));
+        Include include = new Include(position, new Constant<>("test"));
         when(theEnvironment().load("test")).thenThrow(ResourceException.class);
 
         include.compile(compileContext);
@@ -136,7 +136,7 @@ public class IncludeTest extends AbstractJtwigTest {
         Expression withExpression = mock(Expression.class);
         CompilableExpression expression = mock(CompilableExpression.class);
 
-        Include include = new Include(position, new Constant("test")).with(expression);
+        Include include = new Include(position, new Constant<>("test")).with(expression);
 
         when(expression.compile(compileContext)).thenReturn(withExpression);
         when(withExpression.calculate(any(RenderContext.class))).thenReturn(new ArrayList<>());
