@@ -43,7 +43,7 @@ buildscript {
 
 group = 'com.customweb.jtwig'
 ext.buildVersion = '4.0.0'
-ext.javaVersion = '1.7'
+ext.javaVersion = '1.8'
 defaultTasks 'buildAll'
 
 apply plugin: 'io.wallee.root-project'

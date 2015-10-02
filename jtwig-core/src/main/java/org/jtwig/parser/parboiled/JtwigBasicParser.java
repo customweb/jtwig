@@ -210,11 +210,11 @@ public class JtwigBasicParser extends BaseParser<String> {
         return Sequence(OneOrMore('u'), hexDigit(), hexDigit(), hexDigit(), hexDigit());
     }
 
-    Rule hexDigit() {
+    public Rule hexDigit() {
         return FirstOf(CharRange('a', 'f'), CharRange('A', 'F'), CharRange('0', '9'));
     }
 
-    Rule digit() {
+    public Rule digit() {
         return CharRange('0', '9');
     }
 }

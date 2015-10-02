@@ -1,7 +1,9 @@
 package org.jtwig.functions.repository.impl;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+
 import org.jtwig.functions.annotations.JtwigFunction;
 import org.jtwig.functions.annotations.Parameter;
 import org.jtwig.functions.builtin.*;
@@ -12,6 +14,7 @@ import org.jtwig.functions.repository.model.Function;
 import org.jtwig.functions.util.SortedList;
 
 import javax.annotation.Nullable;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -75,13 +78,17 @@ public class MapFunctionRepository implements FunctionRepository {
     public Collection<Function> retrieve(String name, InputParameters parameters) {
         Collection<Function> functions = repository.get(name);
         if (functions == null) return new ArrayList<>();
+
+        Predicate<Function> arg1 = isVarArg();
+        Predicate<Function> arg2 = numberOfArgumentsAnnotatedWithParameter(lessThan(parameters.length()));
+
         return Collections2.filter(functions, or(
-                and(isVarArg(), numberOfArgumentsAnnotatedWithParameter(lessThan(parameters.length()))),
+        		Predicates.and(arg1, arg2),
                 numberOfArgumentsAnnotatedWithParameter(equalTo(parameters.length()))
         ));
     }
 
-    private Predicate<? super Function> isVarArg() {
+    private Predicate<Function> isVarArg() {
         return new Predicate<Function>() {
             @Override
             public boolean apply(@Nullable Function input) {
@@ -90,7 +97,7 @@ public class MapFunctionRepository implements FunctionRepository {
         };
     }
 
-    private Predicate<? super Function> numberOfArgumentsAnnotatedWithParameter(final Predicate<Integer> integerPredicate) {
+    private Predicate<Function> numberOfArgumentsAnnotatedWithParameter(final Predicate<Integer> integerPredicate) {
         return new Predicate<Function>() {
             @Override
             public boolean apply(@Nullable Function input) {
